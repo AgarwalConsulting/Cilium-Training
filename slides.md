@@ -66,7 +66,7 @@ class: center, middle
 
 ---
 
-## As an instructor
+## As a instructor
 
 - I promise to
 
