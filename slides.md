@@ -6,7 +6,9 @@ layout: true
 
 class: center, middle
 
-![Logo](assets/images/cilium.svg)
+![Logo](assets/images/cilium-logo.jpg)
+
+# Cilium
 
 Gaurav Agarwal
 
