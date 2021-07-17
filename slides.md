@@ -6,7 +6,7 @@ layout: true
 
 class: center, middle
 
-![Logo](assets/images/cilium-logo.jpg)
+![Logo](assets/images/cilium-logo.svg)
 
 # Cilium
 
@@ -104,9 +104,12 @@ class: center, middle
 ---
 class: center, middle
 
-Here you are trying to *learn* something, while here your *brain* is doing you a favor by making sure the learning doesn't stick!
+![Class progression](assets/images/learning-curve.jpg)
 
-.content-credits[https://www.oreilly.com/library/view/head-first-design/0596007124/]
+---
+class: center, middle
+
+Here you are trying to *learn* something, while here your *brain* is doing you a favor by making sure the learning doesn't stick!
 
 ---
 
@@ -133,7 +136,7 @@ Here you are trying to *learn* something, while here your *brain* is doing you a
 
 - Listen to your brain
 
-- Experiment
+- *Experiment!*
 
 ---
 class: center, middle
@@ -146,6 +149,11 @@ class: center, middle
 ## Show of hands
 
 *Yay's - in Chat*
+
+---
+class: center, middle
+
+## Why Cilium?
 
 ---
 class: center, middle

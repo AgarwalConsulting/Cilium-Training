@@ -16,20 +16,26 @@ Next, setup a local cluster:
 make k8s-kind-create kind-load-cilium-image
 ```
 
-Make sure the cilium pods have started, successfully:
-
-```bash
-kubectl get pods --all-namespaces -l k8s-app=cilium
-```
-
 Next, install the chart,
 
 ```bash
 make helm-install-cilium
 ```
 
+Make sure the cilium pods have started, successfully:
+
+```bash
+kubectl -n kube-system get pods --watch
+```
+
 ### Test the setup
 
 ```bash
 make test-cilium-setup
+```
+
+Check if all pods are up:
+
+```bash
+kubectl get pods -n cilium-test -w
 ```
