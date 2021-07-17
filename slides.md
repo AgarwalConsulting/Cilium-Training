@@ -131,7 +131,7 @@ Here you are trying to *learn* something, while here your *brain* is doing you a
 
 - Listen to your brain
 
-- Design something
+- Experiment
 
 ---
 class: center, middle
