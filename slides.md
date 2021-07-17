@@ -31,6 +31,11 @@ class: center, middle
 ## What are we going to learn?
 
 ---
+class: center, middle
+
+*Outline*
+
+---
 
 class: center, middle
 
