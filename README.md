@@ -4,8 +4,28 @@ Cilium is open source software for transparently securing the network connectivi
 
 ## Local Setup
 
+First add the repo,
+
 ```bash
-make k8s-kind-create kind-load-cilium-image helm-repo-add helm-install-cilium
+make helm-repo-add
+```
+
+Next, setup a local cluster:
+
+```bash
+make k8s-kind-create kind-load-cilium-image
+```
+
+Make sure the cilium pods have started, successfully:
+
+```bash
+kubectl get pods --all-namespaces -l k8s-app=cilium
+```
+
+Next, install the chart,
+
+```bash
+make helm-install-cilium
 ```
 
 ### Test the setup
