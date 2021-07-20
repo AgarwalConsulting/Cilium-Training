@@ -201,6 +201,8 @@ class: center, middle
 
 ![Network ns](assets/images/network-ns.png)
 
+.content-credits[https://www.youtube.com/watch?v=QMNbgmxmB-M]
+
 ---
 class: center, middle
 
@@ -226,6 +228,8 @@ It forwards traffic basing itself on MAC addresses, which are in turn discovered
 class: center, middle
 
 ![Bridge mode](assets/images/bridge-mode.png)
+
+.content-credits[https://www.youtube.com/watch?v=QMNbgmxmB-M]
 
 ---
 
@@ -334,6 +338,13 @@ CNI must support:
 - Parameters like: container id, network ns, etc...
 - Must manage IP address assignment to PODs
 - Must return results in a specific format
+
+---
+class: center, middle
+
+![Relation between Container Runtime & CNI](assets/images/relation-between-runtime-cni.png)
+
+.content-credits[https://www.youtube.com/watch?v=QMNbgmxmB-M]
 
 ---
 
