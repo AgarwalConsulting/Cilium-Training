@@ -384,6 +384,23 @@ Disclaimer: *Docker doesn't use CNI, it uses Container Network Model (CNM) aka L
 ---
 class: center, middle
 
+![CNM & CNI Networking Plugins & respective frameworks](assets/images/cnm-cni-networking-plugins.png)
+
+.content-credits[https://www.youtube.com/watch?v=QMNbgmxmB-M]
+
+---
+
+### Challenges
+
+- Updates to existing network configuration?
+
+- Every runtime needs a different plugin?
+
+- Security & QoS policies?
+
+---
+class: center, middle
+
 ## What is Cilium?
 
 ---
