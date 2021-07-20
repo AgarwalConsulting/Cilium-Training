@@ -396,6 +396,8 @@ class: center, middle
 
 ![Cilium architecture](assets/images/cilium-architecture.png)
 
+.content-credits[https://github.com/cilium/cilium]
+
 ---
 class: center, middle
 
