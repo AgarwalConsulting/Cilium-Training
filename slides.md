@@ -236,7 +236,14 @@ class: center, middle
 
 ![Bridge mode](assets/images/bridge-mode.png)
 
-.content-credits[https://www.youtube.com/watch?v=QMNbgmxmB-M]
+.content-credits[https://www.youtube.com/watch?v=Slce9Nu-NB0]
+
+---
+
+- Bridge + Veth + iptables
+- Other solutions exist
+- Overlay & Underlay
+- eth0 + loopback
 
 ---
 
