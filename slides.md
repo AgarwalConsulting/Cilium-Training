@@ -227,6 +227,13 @@ It forwards traffic basing itself on MAC addresses, which are in turn discovered
 ---
 class: center, middle
 
+```bash
+bridge add <container-id> /var/run/netns/<namespace>
+```
+
+---
+class: center, middle
+
 ![Bridge mode](assets/images/bridge-mode.png)
 
 .content-credits[https://www.youtube.com/watch?v=QMNbgmxmB-M]
