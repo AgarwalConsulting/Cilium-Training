@@ -524,7 +524,7 @@ Cilium implements bandwidth management through efficient EDT-based (Earliest Dep
 
 ---
 
-#### Integrations
+### Integrations
 
 - Network plugin integrations: CNI, `libnetwork`
 

@@ -74,11 +74,15 @@ make k8s-kind-create
 
 #### Install Cilium
 
+Install cilium in the cluster either using CLI or Helm charts.
+
 ##### Using CLI
 
 ```bash
 make install-cilium
 ```
+
+(or)
 
 ##### Using helm
 
