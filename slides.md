@@ -537,10 +537,10 @@ Cilium implements bandwidth management through efficient EDT-based (Earliest Dep
 ### Local [Setup & Installation](https://github.com/AgarwalConsulting/Cilium-Training/blob/master/Setup.md)
 
 - Minikube
-- Kind
+- Kind (Recommended)
 - Footloose & K3s
 
-Alternatively, use `vagrant` with Footloose & k3s (Recommended).
+Alternatively, use `vagrant` with `footloose` & `k3s`, or with `kind`.
 
 ---
 class: center, middle

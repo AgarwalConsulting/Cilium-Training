@@ -2,10 +2,9 @@
 
 set -e
 
-# make sure we have an up-to-date image for the footloose nodes
-docker pull agarwalconsulting/debian10:latest
-
 docker network create footloose-cluster-cilium
+
+sudo mount bpffs -t bpf /sys/fs/bpf
 
 footloose -c ./devops/config/footloose/multi-node.yaml create
 
@@ -21,7 +20,10 @@ footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node2 -- 
 
 # Sharing the /sys/fs/bpf directory between nodes with the host Docker VM is turning out to be a challenge on Mac/Windows!
 footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node0 -- "sudo mount bpffs -t bpf /sys/fs/bpf"
+footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node0 -- "sudo mount --make-shared /sys/fs/bpf"
 footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node1 -- "sudo mount bpffs -t bpf /sys/fs/bpf"
+footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node1 -- "sudo mount --make-shared /sys/fs/bpf"
 footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node2 -- "sudo mount bpffs -t bpf /sys/fs/bpf"
+footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node2 -- "sudo mount --make-shared /sys/fs/bpf"
 
-footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node0 -- "kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.8/install/kubernetes/quick-install.yaml"
+footloose -c ./devops/config/footloose/multi-node.yaml ssh root@cilium-node0 -- "make -C /labs/ install-cilium test-cilium-setup"
