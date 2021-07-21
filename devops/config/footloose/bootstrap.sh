@@ -1,9 +1,11 @@
 #!/bin/sh
 
-docker network create footloose-cluster-cilium
+set -e
 
 # make sure we have an up-to-date image for the footloose nodes
 docker pull agarwalconsulting/debian10:latest
+
+docker network create footloose-cluster-cilium
 
 footloose -c ./devops/config/footloose/multi-node.yaml create
 

@@ -69,14 +69,20 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y aptitude python2.7 python-setuptools apt-transport-https ca-certificates curl wget time software-properties-common python3-pip virtualenv python3-setuptools gnupg gnupg-agent tcpdump ngrep tshark silversearcher-ag-el bpfcc-tools ipython fzf vim dnsutils jq golang-go git libpcap0.8 libpcap0.8-dev
+
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     apt-get update
     DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io
     systemctl enable docker
+
     curl -Lo footloose https://github.com/weaveworks/footloose/releases/download/0.6.3/footloose-0.6.3-linux-x86_64
     chmod +x footloose
     mv footloose /usr/local/bin/
+
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
     docker pull agarwalconsulting/debian10:latest
   SHELL
 end

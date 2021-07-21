@@ -122,11 +122,7 @@ Please follow the setup guide for your environment [here](https://github.com/wea
 make k8s-footloose-create
 ```
 
-### Setup k3s and mount `bpf` directory & install Cilium
-
-```bash
-make k8s-footloose-setup
-```
+This also sets up k3s and mount `bpf` directory & installs Cilium.
 
 ### Stop the docker based "VMs" & clean up
 
@@ -157,7 +153,9 @@ SSH into the machine and cd into `/labs`.
 
 ```bash
 make vagrant-ssh
+sudo su -
 cd /labs
+
 # Follow the steps from Footloose setup
 ```
 
