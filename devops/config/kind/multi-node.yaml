@@ -7,3 +7,6 @@ nodes:
 - role: worker
 networking:
   disableDefaultCNI: true
+  ## If any of these subnets conflicts with your local network address range, update the networking section of the kind configuration file to specify different subnets that do not conflict or you risk having connectivity issues when deploying Cilium.
+  # podSubnet: "10.10.0.0/16"
+  # serviceSubnet: "10.11.0.0/16"

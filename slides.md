@@ -524,9 +524,20 @@ Cilium implements bandwidth management through efficient EDT-based (Earliest Dep
 
 ---
 
+#### Integrations
+
+- Network plugin integrations: CNI, `libnetwork`
+
+- Container runtime events: `containerd`
+
+- Kubernetes: `NetworkPolicy`, `Labels`, `Ingress`, `Service`
+
+---
+
 ### Local [Setup & Installation](https://github.com/AgarwalConsulting/Cilium-Training/blob/master/Setup.md)
 
 - Minikube
+- Kind
 - Footloose & K3s
 
 ---

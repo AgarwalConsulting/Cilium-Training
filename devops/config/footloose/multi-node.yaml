@@ -1,0 +1,21 @@
+cluster:
+  name: footloose-k8s-cilium
+  privateKey: cluster-key
+machines:
+- count: 3
+  spec:
+    image: agarwalconsulting/debian10:latest
+    name: cilium-node%d
+    privileged: true
+    networks:
+    - footloose-cluster-cilium
+    portMappings:
+    - containerPort: 22
+    volumes:
+    - type: volume
+      destination: /var/lib/docker
+    - type: volume
+      destination: /var/lib/rancher/k3s
+    - type: bind
+      source: /sys/fs/bpf
+      destination: /sys/fs/bpf
