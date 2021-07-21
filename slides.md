@@ -415,6 +415,17 @@ Kubernetes chose simplicity and skipped the dynamic port-allocation deal. It jus
 ---
 class: center, middle
 
+`Kubenet` is a very basic, simple network plugin, on Linux only.
+
+`Kubenet plugin`: implements basic `cbr0` using the `bridge` and `host-local` CNI plugins.
+
+It does not, of itself, implement more advanced features like cross-node networking or network policy. It is typically used together with a cloud provider that sets up routing rules for communication between nodes, or in single-node environments.
+
+.content-credits[https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/#cni]
+
+---
+class: center, middle
+
 ## What is Cilium?
 
 ---
@@ -448,6 +459,75 @@ class: center, middle
 ![Features offered](assets/images/cilium-features.png)
 
 .content-credits[https://cilium.io]
+
+---
+
+#### Protect and secure APIs transparently
+
+- Allow all HTTP requests with method GET and path /public/.*. Deny all other requests.
+
+- Allow service1 to produce on Kafka topic topic1 and service2 to consume on topic1. Reject all other Kafka messages.
+
+- Require the HTTP header X-Token: [0-9]+ to be present in all REST calls.
+
+---
+
+#### Secure service to service communication based on identities
+
+Cilium assigns a security identity to groups of application containers which share identical security policies. The identity is then associated with all network packets emitted by the application containers, allowing to validate the identity at the receiving node. Security identity management is performed using a key-value store.
+
+---
+
+#### Simple Networking
+
+The following multi node networking models are supported:
+
+- **Overlay**: Encapsulation-based virtual network spanning all hosts. Currently VXLAN and Geneve are baked in but all encapsulation formats supported by Linux can be enabled.
+
+  - *When to use this mode*: This mode has minimal infrastructure and integration requirements. It works on almost any network infrastructure as the only requirement is IP connectivity between hosts which is typically already given.
+
+- **Native Routing**: Use of the regular routing table of the Linux host. The network is required to be capable to route the IP addresses of the application containers.
+
+  - *When to use this mode*: This mode is for advanced users and requires some awareness of the underlying networking infrastructure. This mode works well with:
+
+    - Native IPv6 networks
+    - In conjunction with cloud network routers
+    - If you are already running routing daemons
+
+---
+
+#### Load Balancing
+
+Cilium implements distributed load balancing for traffic between application containers and to external services and is able to fully replace components such as kube-proxy. The load balancing is implemented in eBPF using efficient hashtables allowing for almost unlimited scale.
+
+For north-south type load balancing, Cilium's eBPF implementation is optimized for maximum performance, can be attached to XDP (eXpress Data Path), and supports direct server return (DSR) as well as Maglev consistent hashing if the load balancing operation is not performed on the source host.
+
+For east-west type load balancing, Cilium performs efficient service-to-backend translation right in the Linux kernel's socket layer (e.g. at TCP connect time) such that per-packet NAT operations overhead can be avoided in lower layers.
+
+---
+
+#### Bandwidth Management
+
+Cilium implements bandwidth management through efficient EDT-based (Earliest Departure Time) rate-limiting with eBPF for container traffic that is egressing a node. This allows to significantly reduce transmission tail latencies for applications and to avoid locking under multi-queue NICs compared to traditional approaches such as HTB (Hierarchy Token Bucket) or TBF (Token Bucket Filter) as used in the bandwidth CNI plugin, for example.
+
+---
+
+#### Monitoring and Troubleshooting
+
+- Event monitoring with metadata: When a packet is dropped, the tool doesn't just report the source and destination IP of the packet, the tool provides the full label information of both the sender and receiver among a lot of other information.
+
+- Policy decision tracing: Why is a packet being dropped or a request rejected. The policy tracing framework allows to trace the policy decision process for both, running workloads and based on arbitrary label definitions.
+
+- Metrics export via Prometheus: Key metrics are exported via Prometheus for integration with your existing dashboards.
+
+- Hubble: An observability platform specifically written for Cilium. It provides service dependency maps, operational monitoring and alerting, and application and security visibility based on flow logs.
+
+---
+
+### Local [Setup & Installation](https://github.com/AgarwalConsulting/Cilium-Training/blob/master/Setup.md)
+
+- Minikube
+- Footloose & K3s
 
 ---
 class: center, middle
