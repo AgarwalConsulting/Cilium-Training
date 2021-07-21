@@ -40,6 +40,8 @@ kubectl get pods -n cilium-test -w
 make k8s-minikube-stop
 ```
 
+---
+
 ## Local K8s using Kind
 
 ### Pre-setup macOS (kind)
@@ -100,6 +102,8 @@ make cleanup-test
 make k8s-kind-delete
 ```
 
+---
+
 ## Local K8s using Footloose/K3s
 
 ### Pre-setup macOS (Footloose)
@@ -128,4 +132,37 @@ make k8s-footloose-setup
 
 ```bash
 make k8s-footloose-delete
+```
+
+---
+
+## Vagrant based lab
+
+If most of you aren't using linux OS, this is the recommended way, combine this approach with Footloose setup. You can stop Docker for macOS/Windows at this point.
+
+### Pre setup (Vagrant)
+
+```bash
+brew install --cask virtualbox
+brew install vagrant
+```
+
+### Install the guest additions plugin and bring the image up
+
+```bash
+make vagrant-setup vagrant-up
+```
+
+SSH into the machine and cd into `/labs`.
+
+```bash
+make vagrant-ssh
+cd /labs
+# Follow the steps from Footloose setup
+```
+
+### Stopping the VM
+
+```bash
+make vagrant-down
 ```
