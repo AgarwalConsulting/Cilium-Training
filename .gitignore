@@ -16,3 +16,4 @@ outline.pdf
 # End of https://www.toptal.com/developers/gitignore/api/vagrant
 cluster-key cluster-key.pub
 cluster-key.pub
+project-resources
