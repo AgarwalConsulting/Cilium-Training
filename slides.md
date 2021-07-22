@@ -447,7 +447,7 @@ class: center, middle
 ---
 class: center, middle
 
-![Cilium architecture](assets/images/cilium-architecture.png)
+![Cilium Features with eBPF](assets/images/cilium-features-using-ebf.png)
 
 .content-credits[https://github.com/cilium/cilium]
 
@@ -541,6 +541,177 @@ Cilium implements bandwidth management through efficient EDT-based (Earliest Dep
 - Footloose & K3s
 
 Alternatively, use `vagrant` with `kind`.
+
+---
+class: center, middle
+
+## Cilium Components
+
+---
+
+A deployment of Cilium and Hubble consists of the following components running in a cluster:
+
+- Cilium components
+
+  - Cilium Agent
+  - Cilium Client (CLI)
+  - Operator
+  - CNI Plugin
+
+- Hubble components
+
+  - Server
+  - Relay
+  - Client (CLI)
+  - Graphical UI
+
+And relies on:
+
+- eBPF
+
+- Data Store
+
+  - Kubernetes CRDs
+  - Key-Value store
+
+---
+class: center, middle
+
+![Cilium Architecture](assets/images/cilium-architecture.png)
+
+---
+
+### Cilium components
+
+#### Agent
+
+The Cilium agent (`cilium-agent`) runs on each node in the cluster. At a high-level, the agent accepts configuration via Kubernetes or APIs that describes networking, service load-balancing, network policies, and visibility & monitoring requirements.
+
+The Cilium agent listens for events from orchestration systems such as Kubernetes to learn when containers or workloads are started and stopped. It manages the eBPF programs which the Linux kernel uses to control all network access in / out of those containers.
+
+#### Cilium Client (CLI)
+
+The Cilium CLI client (`cilium`) is a command-line tool that is installed along with the Cilium agent. It interacts with the REST API of the Cilium agent running on the same node. The CLI allows inspecting the state and status of the local agent. It also provides tooling to directly access the eBPF maps to validate their state.
+
+---
+
+### Cilium components (continued)
+
+#### Operator
+
+The Cilium Operator is responsible for managing duties in the cluster which should logically be handled once for the entire cluster, rather than once for each node in the cluster. The Cilium operator is not in the critical path for any forwarding or network policy decision. A cluster will generally continue to function if the operator is temporarily unavailable. However, depending on the configuration, failure in availability of the operator can lead to:
+
+- Delays in IP Address Management (IPAM) and thus delay in scheduling of new workloads if the operator is required to allocate new IP addresses
+- Failure to update the kvstore heartbeat key which will lead agents to declare kvstore unhealthiness and restart.
+
+#### CNI Plugin
+
+The CNI plugin (`cilium-cni`) is invoked by Kubernetes when a pod is scheduled or terminated on a node. It interacts with the Cilium API of the node to trigger the necessary datapath configuration to provide networking, load-balancing and network policies for the pod.
+
+---
+class: center, middle
+
+### Hubble
+
+---
+class: center, middle
+
+Hubble is a fully distributed networking and security observability platform. It is built on top of Cilium and eBPF to enable deep visibility into the communication and behavior of services as well as the networking infrastructure in a completely transparent manner.
+
+*An observability platform specifically written for Cilium.*
+
+---
+class: center, middle
+
+### Hubble components
+
+---
+
+#### Server
+
+The Hubble server runs on each node and retrieves the eBPF-based visibility from Cilium. It is embedded into the Cilium agent in order to achieve high performance and low-overhead. It offers a gRPC service to retrieve flows and Prometheus metrics.
+
+#### Relay
+
+Relay (`hubble-relay`) is a standalone component which is aware of all running Hubble servers and offers cluster-wide visibility by connecting to their respective gRPC APIs and providing an API that represents all servers in the cluster.
+
+---
+
+### Hubble components (continued)
+
+#### Hubble Client (CLI)
+
+The Hubble CLI (`hubble`) is a command-line tool able to connect to either the gRPC API of hubble-relay or the local server to retrieve flow events.
+
+#### Graphical UI (GUI)
+
+The graphical user interface (`hubble-ui`) utilizes relay-based visibility to provide a graphical service dependency and connectivity map.
+
+---
+class: center, middle
+
+### eBPF
+
+---
+class: center, middle
+
+eBPF is a Linux kernel bytecode interpreter originally introduced to filter network packets, e.g. tcpdump and socket filters.
+
+---
+class: center, middle
+
+*eBPF stands for extended Berkeley Packet Filter.*
+
+---
+class: center, middle
+
+eBPF is enabling visibility into and control over systems and applications at a granularity and efficiency that was not possible before. It does so in a completely transparent way, without requiring the application to change in any way. eBPF is equally well-equipped to handle modern containerized workloads as well as more traditional workloads such as virtual machines and standard Linux processes.
+
+---
+class: center, middle
+
+By leveraging Linux eBPF, Cilium retains the ability to transparently insert security visibility + enforcement, but does so in a way that is based on service / pod / container identity (in contrast to IP address identification in traditional systems) and can filter on application-layer (e.g. HTTP). As a result, Cilium not only makes it simple to apply security policies in a highly dynamic environment by decoupling security from addressing, but can also provide stronger security isolation by operating at the HTTP-layer in addition to providing traditional Layer 3 and Layer 4 segmentation.
+
+---
+
+- It has since been extended with additional data structures such as hashtable and arrays as well as additional actions to support packet mangling, forwarding, encapsulation, etc.
+
+- An in-kernel verifier ensures that eBPF programs are safe to run and a JIT compiler converts the bytecode to CPU architecture specific instructions for native execution efficiency. eBPF programs can be run at various hooking points in the kernel such as for incoming and outgoing packets.
+
+- Hubble can leverage eBPF for visibility. By relying on eBPF, all visibility is programmable and allows for a dynamic approach that minimizes overhead while providing deep and detailed visibility as required by users. Hubble has been created and specifically designed to make best use of these new eBPF powers.
+
+---
+
+- eBPF continues to evolve and gain additional capabilities with each new Linux release. Cilium leverages eBPF to perform core datapath filtering, mangling, monitoring and redirection, and requires eBPF capabilities that are in any Linux kernel version 4.8.0 or newer.
+
+- Cilium recommends to run at least kernel 4.9.17 (the latest current stable Linux kernel is 4.10.x).
+
+- Cilium is capable of probing the Linux kernel for available features and will automatically make use of more recent features as they are detected.
+
+---
+class: center, middle
+
+### Data Store
+
+---
+class: center, middle
+
+Cilium requires a data store to propagate state between agents.
+
+---
+
+#### Kubernetes CRDs (Default)
+
+The default choice to store any data and propagate state is to use Kubernetes custom resource definitions (CRDs). CRDs are offered by Kubernetes for cluster components to represent configurations and state via Kubernetes resources.
+
+#### Key-Value Store
+
+All requirements for state storage and propagation can be met with Kubernetes CRDs as configured in the default configuration of Cilium. A key-value store can optionally be used as an optimization to improve the scalability of a cluster as change notifications and storage requirements are more efficient with direct key-value store usage.
+
+The currently supported key-value stores are:
+
+- `etcd`
+- `consul`
 
 ---
 class: center, middle
