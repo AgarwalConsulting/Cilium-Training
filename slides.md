@@ -716,6 +716,21 @@ The currently supported key-value stores are:
 ---
 class: center, middle
 
+## Networking with Cilium
+
+---
+class: center, middle
+
+Before we begin... Let's understand eBPF better...
+
+---
+class: center, middle
+
+### eBPF Datapath
+
+---
+class: center, middle
+
 Code
 https://github.com/AgarwalConsulting/Cilium-Training
 

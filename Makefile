@@ -26,7 +26,7 @@ kind-ssh-node0:
 kind-ssh-node1:
 	docker exec -it kind-worker2 bash
 
-kind-ssh-node1:
+kind-ssh-node2:
 	docker exec -it kind-worker3 bash
 
 kind-load-cilium-image:
