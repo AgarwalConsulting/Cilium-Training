@@ -62,6 +62,9 @@ vagrant-up:
 	vagrant up
 
 vagrant-ssh:
+	vagrant ssh -c "sudo su -"
+
+vagrant-tssh:
 	vagrant ssh -c "cd /labs && sudo tmux a -t basevm || sudo tmux new -s basevm"
 
 vagrant-down:
