@@ -1,0 +1,76 @@
+install-macos:
+	./setup/cilium/macos.sh
+	./setup/hubble/macos.sh
+
+install-linux:
+	./setup/cilium/linux.sh
+	./setup/hubble/linux.sh
+
+k8s-kind-create:
+	kind create cluster --config devops/config/kind/multi-node.yaml
+
+kind-ssh-control:
+	docker exec -it kind-control-node /bin/bash
+
+k8s-kind-default-cni-create:
+	kind create cluster --config devops/config/kind/multi-node-default.yaml
+
+kind-load-cilium-image:
+	docker pull cilium/cilium:v1.8.10
+	kind load docker-image cilium/cilium:v1.8.10
+
+k8s-kind-delete:
+	kind delete cluster --name kind
+
+k8s-minikube-start:
+	minikube start --cni=cilium --memory=4096 # Only available for minikube >= v1.12.1
+	minikube ssh -- sudo mount bpffs -t bpf /sys/fs/bpf
+
+k8s-minikube-stop:
+	minikube stop
+
+vagrant-setup:
+	vagrant plugin install vagrant-vbguest
+
+vagrant-up:
+	vagrant up
+
+vagrant-ssh:
+	vagrant ssh -c "sudo su -"
+
+vagrant-down:
+	vagrant halt
+
+k8s-footloose-create:
+	./devops/config/footloose/bootstrap.sh
+
+k8s-footloose-delete:
+	footloose stop -c ./devops/config/footloose/multi-node.yaml
+	footloose delete -c ./devops/config/footloose/multi-node.yaml
+	docker network rm footloose-cluster-cilium
+
+footloose-ssh-node0:
+	footloose ssh -c ./devops/config/footloose/multi-node.yaml root@cilium-node0
+
+footloose-ssh-node1:
+	footloose ssh -c ./devops/config/footloose/multi-node.yaml root@cilium-node1
+
+footloose-ssh-node2:
+	footloose ssh -c ./devops/config/footloose/multi-node.yaml root@cilium-node2
+
+helm-repo-add:
+	helm repo add cilium https://helm.cilium.io/
+
+helm-install-cilium:
+	helm install cilium cilium/cilium --version 1.10.3 --namespace kube-system
+
+install-cilium:
+	cilium install
+
+test-cilium-setup:
+	cilium status --wait
+	cilium connectivity test
+
+build-and-push-image:
+	docker build -t agarwalconsulting/debian10:latest .
+	docker push agarwalconsulting/debian10:latest
