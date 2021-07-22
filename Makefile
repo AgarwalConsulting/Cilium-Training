@@ -9,8 +9,21 @@ install-linux:
 k8s-kind-create:
 	kind create cluster --config devops/config/kind/multi-node.yaml
 
+k8s-kind-create-debug:
+	kind create cluster --config devops/config/kind/multi-node.yaml
+	./devops/config/kind/setup.sh
+
 kind-ssh-control:
-	docker exec -it kind-control-node /bin/bash
+	docker exec -it kind-control-plane bash
+
+kind-ssh-node0:
+	docker exec -it kind-worker bash
+
+kind-ssh-node1:
+	docker exec -it kind-worker2 bash
+
+kind-ssh-node1:
+	docker exec -it kind-worker3 bash
 
 k8s-kind-default-cni-create:
 	kind create cluster --config devops/config/kind/multi-node-default.yaml
