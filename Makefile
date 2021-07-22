@@ -29,6 +29,18 @@ kind-ssh-node1:
 kind-ssh-node2:
 	docker exec -it kind-worker3 bash
 
+vagrant-kind-ssh-control:
+	vagrant ssh -c "sudo docker exec -it kind-control-plane bash"
+
+vagrant-kind-ssh-node0:
+	vagrant ssh -c "sudo docker exec -it kind-worker bash"
+
+vagrant-kind-ssh-node1:
+	vagrant ssh -c "sudo docker exec -it kind-worker2 bash"
+
+vagrant-kind-ssh-node2:
+	vagrant ssh -c "sudo docker exec -it kind-worker3 bash"
+
 kind-load-cilium-image:
 	docker pull cilium/cilium:v1.8.10
 	kind load docker-image cilium/cilium:v1.8.10
