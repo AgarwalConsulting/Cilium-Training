@@ -4,7 +4,7 @@ set -e
 
 # Install the latest version of tools
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y aptitude bridge-utils python2.7 python-setuptools apt-transport-https ca-certificates curl wget time software-properties-common python3-pip virtualenv python3-setuptools gnupg gnupg-agent tcpdump ngrep tshark silversearcher-ag-el bpfcc-tools ipython fzf vim dnsutils jq golang-go git libpcap0.8 libpcap0.8-dev
+DEBIAN_FRONTEND=noninteractive apt-get install -y aptitude bridge-utils python2.7 python-setuptools apt-transport-https ca-certificates curl wget time software-properties-common python3-pip virtualenv python3-setuptools gnupg gnupg-agent tcpdump ngrep tshark silversearcher-ag-el bpfcc-tools ipython fzf vim dnsutils jq golang-go git libpcap0.8 libpcap0.8-dev tmux
 
 # Install and configure docker
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -

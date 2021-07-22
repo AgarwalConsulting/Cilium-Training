@@ -88,3 +88,6 @@ test-cilium-setup:
 build-and-push-image:
 	docker build -t agarwalconsulting/debian10:latest .
 	docker push agarwalconsulting/debian10:latest
+
+analyze-vxlan:
+	tshark --color -i eth0 -d udp.port=8472,vxlan -f "port 8472"
