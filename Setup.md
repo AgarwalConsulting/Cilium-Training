@@ -162,7 +162,7 @@ make k8s-footloose-delete
 
 ### Vagrant based lab
 
-If most of you aren't using linux OS, this is the recommended way, combine this approach with Footloose setup. You can stop Docker for macOS/Windows at this point.
+If most of you aren't using linux OS, this is the recommended way, combine this approach with `kind` setup. You can stop Docker for macOS/Windows at this point.
 
 #### Pre setup (Vagrant)
 
@@ -181,10 +181,10 @@ SSH into the machine and cd into `/labs`.
 
 ```bash
 make vagrant-ssh
-sudo su -
+# sudo su - # Done automatically
 cd /labs
 
-# Follow the steps from Footloose setup or `kind` setup
+# Follow the steps from `kind` setup
 ```
 
 #### Stopping the VM

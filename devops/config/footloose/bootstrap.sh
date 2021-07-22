@@ -2,6 +2,9 @@
 
 set -e
 
+# Pull image for footloose
+docker pull agarwalconsulting/debian10:latest
+
 docker network create footloose-cluster-cilium
 
 sudo mount bpffs -t bpf /sys/fs/bpf

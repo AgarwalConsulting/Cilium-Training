@@ -540,7 +540,7 @@ Cilium implements bandwidth management through efficient EDT-based (Earliest Dep
 - Kind (Recommended)
 - Footloose & K3s
 
-Alternatively, use `vagrant` with `footloose` & `k3s`, or with `kind`.
+Alternatively, use `vagrant` with `kind`.
 
 ---
 class: center, middle
