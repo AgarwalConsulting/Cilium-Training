@@ -726,7 +726,147 @@ Before we begin... Let's understand eBPF better...
 ---
 class: center, middle
 
-### eBPF Datapath
+### BPF
+
+---
+class: center, middle
+
+BPF is a general purpose RISC instruction set and was originally designed for the purpose of writing programs in a subset of C which can be compiled into BPF instructions through a compiler back end (e.g. LLVM), so that the kernel can later on map them through an in-kernel JIT compiler into native opcodes for optimal execution performance inside the kernel.
+
+---
+
+#### Advantages of BPF
+
+- Making the kernel programmable without having to cross kernel / user space boundaries. For example, BPF programs related to networking, as in the case of Cilium, can implement flexible container policies, load balancing and other means without having to move packets to user space and back into the kernel. State between BPF programs and kernel / user space can still be shared through maps whenever needed.
+
+- Given the flexibility of a programmable data path, programs can be heavily optimized for performance also by compiling out features that are not required for the use cases the program solves. For example, if a container does not require IPv4, then the BPF program can be built to only deal with IPv6 in order to save resources in the fast-path.
+
+---
+
+#### Advantages of BPF (continued...)
+
+- In case of networking (e.g. tc and XDP), BPF programs can be updated atomically without having to restart the kernel, system services or containers, and without traffic interruptions. Furthermore, any program state can also be maintained throughout updates via BPF maps.
+
+- BPF provides a stable ABI towards user space, and does not require any third party kernel modules. BPF is a core part of the Linux kernel that is shipped everywhere, and guarantees that existing BPF programs keep running with newer kernel versions. This guarantee is the same guarantee that the kernel provides for system calls with regard to user space applications. Moreover, BPF programs are portable across different architectures.
+
+---
+
+#### Advantages of BPF (continued)
+
+- BPF programs work in concert with the kernel, they make use of existing kernel infrastructure (e.g. drivers, netdevices, tunnels, protocol stack, sockets) and tooling (e.g. iproute2) as well as the safety guarantees which the kernel provides. Unlike kernel modules, BPF programs are verified through an in-kernel verifier in order to ensure that they cannot crash the kernel, always terminate, etc. XDP programs, for example, reuse the existing in-kernel drivers and operate on the provided DMA buffers containing the packet frames without exposing them or an entire driver to user space as in other models. Moreover, XDP programs reuse the existing stack instead of bypassing it. BPF can be considered a generic “glue code” to kernel facilities for crafting programs to solve specific use cases.
+
+---
+class: center, middle
+
+*The execution of a BPF program inside the kernel is always event-driven!*
+
+---
+
+#### Events like
+
+- A networking device which has a BPF program attached on its ingress path will trigger the execution of the program once a packet is received.
+
+- A kernel address which has a `kprobe` with a BPF program attached will trap once the code at that address gets executed, which will then invoke the `kprobe`’s callback function for instrumentation, subsequently triggering the execution of the attached BPF program.
+
+---
+class: center, middle
+
+#### Sample BPF program
+
+![Sample eBPF program](assets/images/ebpf-sample-program.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+*e**X**tended **D**ata **P**ath*
+
+---
+class: center, middle
+
+*XDP is a further step in evolution and enables to run a specific flavor of BPF programs from the network driver with direct access to the packet's DMA buffer. This is, by definition, the earliest possible point in the software stack, where programs can be attached to in order to allow for a programmable, high performance packet processor in the Linux kernel networking data path.*
+
+---
+
+class: center, middle
+
+#### Default Network path (Layer 1)
+
+![network-path-layer-1](assets/images/network-path-layer-1.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+#### Default Network path (Layer 2)
+
+![network-path-layer-2](assets/images/network-path-layer-2.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+#### Default Network path (Layer 2 & 3)
+
+![network-path-layer-2-3](assets/images/network-path-layer-2-3.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+#### Default Network path (Layer 3 & 4)
+
+![network-path-layer-3-4](assets/images/network-path-layer-3-4.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+#### Default Network path (Layer 4)
+
+![network-path-layer-4](assets/images/network-path-layer-4.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+#### Default Network path (Layer 4 - User Space)
+
+![network-path-layer-4-user-space](assets/images/network-path-layer-4-user-space.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+![eBPF Program with Kernel](assets/images/ebpf-kernel.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+![eBPF JIT](assets/images/ebpf-jit.png)
+
+.content-credits[https://github.com/cilium/cilium#what-is-ebpf-and-xdp]
+
+---
+class: center, middle
+
+![Kubernetes Cilium Kernel relation](assets/images/kubernetes-cilium-kernel.png)
+
+.content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+`More info on BPF` - [Cilium's BPF guide](https://docs.cilium.io/en/v1.8/bpf/#bpf-guide)
 
 ---
 class: center, middle
