@@ -1008,6 +1008,172 @@ It is possible to utilize the Google Cloud’s networking layer with Cilium runn
 ---
 class: center, middle
 
+### IP Address Management (IPAM)
+
+---
+class: center, middle
+
+IPAM (IP Address Management) is the administration of DNS and DHCP, which are the network services that assign and resolve IP addresses to machines in a TCP/IP network.
+
+---
+class: center, middle
+
+Simply put, IPAM is a means of planning, tracking, and managing the Internet Protocol address space used in a network. Most commonly, tools such as DNS and DHCP are used in tandem to perform this task, though true IPAM will glue these services together so that each is aware of changes in the other (for instance DNS knowing of the IP address taken by a client via DHCP, and updating itself accordingly).
+
+---
+class: center, middle
+
+*IP Address Management (IPAM) is responsible for the allocation and management of IP addresses used by network endpoints (container and others) managed by Cilium.*
+
+---
+
+In Kubernetes, there are 3 entities which have IPs assigned:
+
+- Pods
+  - Containers in a Pod share the same IP
+
+- Service
+
+- Nodes
+
+---
+
+Various IPAM modes are supported to meet the needs of different users:
+
+- *Cluster Scope (Default)*
+
+- *Kubernetes Host Scope*
+
+- > Azure IPAM (beta)
+
+- > AWS ENI
+
+- > Google Kubernetes Engine
+
+- > CRD-Backed
+
+- > Host Scope (Legacy)
+
+---
+
+#### CIDR Refresher
+
+- 10.0.0.0/8
+
+- 192.168.0.0/16
+
+- 172.16.0.0/12
+
+- 169.254.0.0/16
+
+What do these values mean?
+
+---
+
+##### Private IPv4 ranges
+
+- **10.0.0.0/8**
+
+- **192.168.0.0/16**
+
+- **172.16.0.0/12**
+
+---
+class: center, middle
+
+#### Cluster Scope
+
+---
+class: center, middle
+
+The cluster-scope IPAM mode assigns per-node PodCIDRs to each node and allocates IPs using a host-scope allocator on each node.
+
+---
+class: center, middle
+
+##### Architecture of Cluster Scope
+
+![IPAM Cluster Scope](assets/images/ipam-cluster_pool.png)
+
+---
+class: center, middle
+
+This is useful if Kubernetes cannot be configured to hand out `PodCIDRs` or if more control is needed.
+
+*The advantage of this mode is that it does not depend on Kubernetes being configured to hand out per-node PodCIDRs.*
+
+---
+class: center, middle
+
+In this mode, the Cilium agent will wait on startup until the `PodCIDRs` range are made available via the Cilium Node `v2.CiliumNode` object for all enabled address families via the resource field set in the `v2.CiliumNode`: `Spec.IPAM.PodCIDRs`.
+
+---
+class: center, middle
+
+It is similar to the Kubernetes Host Scope mode.
+
+---
+class: center, middle
+
+#### Kubernetes Host Scope
+
+---
+class: center, middle
+
+The Kubernetes host-scope IPAM mode is enabled with `ipam: kubernetes` and delegates the address allocation to each individual node in the cluster. IPs are allocated out of the `PodCIDR` range associated to each node by Kubernetes.
+
+---
+class: center, middle
+
+##### Architecture of K8s Host Scope
+
+![IPAM Kubernetes Host Scope](assets/images/ipam-k8s_host_scope.png)
+
+---
+
+##### Configuration of K8s Host Scope
+
+The following ConfigMap options exist to configure Kubernetes host scope:
+
+- `ipam: kubernetes` - Enables Kubernetes IPAM mode. Enabling this option will automatically enable `k8s-require-ipv4-pod-cidr` if `enable-ipv4` is true and `k8s-require-ipv6-pod-cidr` if `enable-ipv6` is true.
+
+- `k8s-require-ipv4-pod-cidr: true` - instructs the Cilium agent to wait until an IPv4 PodCIDR is made available via the Kubernetes node resource.
+
+- `k8s-require-ipv6-pod-cidr: true` - instructs the Cilium agent to wait until an IPv6 PodCIDR is made available via the Kubernetes node resource.
+
+.content-credits[https://docs.cilium.io/en/v1.8/concepts/networking/ipam/kubernetes/]
+
+---
+class: center, middle
+
+#### Cilium Container Networking Control Flow
+
+![Cilium Container Networking Control Flow](assets/images/cilium_container_networking_control_flow.png)
+
+---
+
+### Other terms
+
+- Egress / Ingress
+
+![Egress / Ingress](assets/images/ingress-vs-egress.png)
+
+---
+
+- [Masquerade](https://docs.cilium.io/en/v1.8/concepts/networking/masquerading/)
+
+  - Masquerading is the process of redirecting traffic from one network to another.
+
+  - Masquerading is a security feature that allows traffic from one network to be routed to another.
+
+---
+class: center, middle
+
+![Masquerade](assets/images/masquerade.png)
+
+---
+class: center, middle
+
 Code
 https://github.com/AgarwalConsulting/Cilium-Training
 

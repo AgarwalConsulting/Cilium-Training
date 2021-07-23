@@ -57,8 +57,7 @@
 
     - Cluster Scope
     - Kubernetes Host Scope
-
-  - Cilium Container Networking Control Flow
+    - Cilium Container Networking Control Flow
 
 - Network Security with cilium
 
