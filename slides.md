@@ -523,6 +523,11 @@ Cilium implements bandwidth management through efficient EDT-based (Earliest Dep
 - Hubble: An observability platform specifically written for Cilium. It provides service dependency maps, operational monitoring and alerting, and application and security visibility based on flow logs.
 
 ---
+class: center, middle
+
+![Features expanded](assets/images/cilium-features-expanded.png)
+
+---
 
 ### Integrations
 
@@ -780,12 +785,19 @@ class: center, middle
 ---
 class: center, middle
 
-*e**X**tended **D**ata **P**ath*
+*e**X**press **D**ata **P**ath*
 
 ---
 class: center, middle
 
-*XDP is a further step in evolution and enables to run a specific flavor of BPF programs from the network driver with direct access to the packet's DMA buffer. This is, by definition, the earliest possible point in the software stack, where programs can be attached to in order to allow for a programmable, high performance packet processor in the Linux kernel networking data path.*
+*The XDP BPF hook is at the earliest point possible in the networking driver and triggers a run of the BPF program upon packet reception.*
+
+---
+class: center, middle
+
+This achieves the best possible packet processing performance since the program runs directly on the packet data before any other processing can happen. This hook is ideal for running filtering programs that drop malicious or unexpected traffic, and other common DDOS protection mechanisms.
+
+*XDP is a further step in evolution of BPF and enables to run a specific flavor of BPF programs from the network driver with direct access to the packet's DMA buffer.*
 
 ---
 
@@ -867,6 +879,129 @@ class: center, middle
 class: center, middle
 
 `More info on BPF` - [Cilium's BPF guide](https://docs.cilium.io/en/v1.8/bpf/#bpf-guide)
+
+---
+class: middle
+
+- eBPF is hard to write
+
+- Cilium is ... uhm ... easi(er)?
+
+- Cilium is a CNI & *can be a replacement for `kube-proxy`*
+
+.content-credits[https://docs.google.com/presentation/d/1KBKfseEHbTK4DB-SCuEzze7Fb58s3yCKio-OZDvPcbk/edit#slide=id.g78ed7bc73c_0_277]
+
+---
+class: center, middle
+
+### Routing in Cilium
+
+---
+class: center, middle
+
+#### Encapsulation mode
+
+---
+class: center, middle
+
+##### Anatomy of a network packet
+
+![Anatomy of network packet](assets/images/anatomy-of-network-packet.png)
+
+.content-credits[https://www.tigera.io/lp/kubernetes-networking-ebook/]
+
+---
+class: center, middle
+
+Cilium automatically runs in *Encapsulation* mode as it is the mode with the fewest requirements on the underlying networking infrastructure.
+
+---
+class: center, middle
+
+In this mode, all cluster nodes form a mesh of tunnels using the UDP-based encapsulation protocols `VXLAN` or `Geneve`. All traffic between Cilium nodes is encapsulated.
+
+---
+
+##### VXLAN
+
+`VXLAN` is an encapsulation protocol that provides data center connectivity using tunneling to stretch Layer 2 connections over an underlying Layer 3 network.
+
+It uses `UDP` packets to wrap the `IP` packets. <sup>[[1]](https://www.juniper.net/us/en/research-topics/what-is-vxlan.html)</sup>
+
+##### Geneve
+
+The stated goal of `GENEVE` is to define an encapsulation data format only.
+
+`GENEVE` encapsulated packets are designed to be transmitted via standard networking equipment. Packets are sent from one tunnel endpoint to one or more tunnel endpoints using either unicast or multicast addressing. <sup>[[2]](https://www.redhat.com/en/blog/what-geneve)</sup>
+
+---
+class: center, middle
+
+*Demo*: Hello, Kubernetes!
+
+---
+class: center, middle
+
+An *overlay* network is a telecommunications network that is built on top of another network and is supported by its infrastructure. An *overlay* network decouples network services from the underlying infrastructure by encapsulating one packet inside of another packet.
+
+---
+class: center, middle
+
+##### Anatomy of a overlay network packet
+
+![Anatomy of overlay network packet](assets/images/anatomy-of-overlay-network-packet.png)
+
+.content-credits[https://www.tigera.io/lp/kubernetes-networking-ebook/]
+
+---
+
+Overlay networks have the advantage of having minimal dependencies on the underlying network infrastructure, but have the downsides of:
+
+- having a small performance impact compared to non-overlay networking, which you might want to avoid if running network intensive workloads
+
+- workloads on the overlay are not easily addressable from the rest of the network. so NAT gateways or load balancers are required to bridge between the overlay and the underlay network for any ingress to, or egress from, the overlay.
+
+.content-credits[https://www.tigera.io/lp/kubernetes-networking-ebook/]
+
+---
+
+##### Advantages of overlay
+
+###### Simplicity
+
+The network which connects the cluster nodes does not need to be made aware of the PodCIDRs. Cluster nodes can spawn multiple routing or link-layer domains. The topology of the underlying network is irrelevant as long as cluster nodes can reach each other using IP/UDP.
+
+###### Addressing space
+
+Due to not depending on any underlying networking limitations, the available addressing space is potentially much larger and allows to run any number of pods per node if the PodCIDR size is configured accordingly.
+
+---
+
+##### Advantages of overlay (continued)
+
+###### Auto-configuration
+
+When running together with an orchestration system such as Kubernetes, the list of all nodes in the cluster including their associated allocation prefix node is made available to each agent automatically. New nodes joining the cluster will automatically be incorporated into the mesh.
+
+###### Identity context
+
+Encapsulation protocols allow for the carrying of metadata along with the network packet. Cilium makes use of this ability to transfer metadata such as the source security identity. The identity transfer is an optimization designed to avoid one identity lookup on the remote node.
+
+---
+
+#### Other routing modes
+
+- Native routing
+
+In native routing mode, Cilium will delegate all packets which are not addressed to another local endpoint to the routing subsystem of the Linux kernel.
+
+- AWS ENI
+
+It is a special purpose datapath that is useful when running Cilium in an AWS environment.
+
+- Google Cloud
+
+It is possible to utilize the Google Cloud’s networking layer with Cilium running in a Native-Routing configuration.
 
 ---
 class: center, middle
