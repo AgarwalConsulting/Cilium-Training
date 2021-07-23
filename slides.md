@@ -1003,6 +1003,8 @@ It is a special purpose datapath that is useful when running Cilium in an AWS en
 
 It is possible to utilize the Google Cloud’s networking layer with Cilium running in a Native-Routing configuration.
 
+.content-credits[https://docs.cilium.io/en/v1.8/concepts/networking/routing/]
+
 ---
 class: center, middle
 
