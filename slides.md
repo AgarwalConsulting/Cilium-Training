@@ -1699,9 +1699,238 @@ class: center, middle
 *Challenge*: Define your [own `NetworkPolicy`](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/challenges/01-network-policy) for egress traffic as well
 
 ---
+
+### [Further Reading](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
+
+- SCTP support
+
+- Targeting a range of Ports
+
+- Targeting a Namespace by its name
+
+- What you can't do with network policies (at least, not yet)
+
+---
 class: center, middle
 
-*Further Reading*: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+## Cilium defined `NetworkPolicy`
+
+---
+
+### Terminology
+
+- Endpoint
+
+  Cilium makes application containers available on the network by assigning them IP addresses. Multiple application containers can share the same IP address; a typical example for this model is a Kubernetes Pod. All application containers which share a common address are grouped together in what Cilium refers to as an endpoint.
+
+  Allocating individual IP addresses enables the use of the entire Layer 4 port range by each endpoint. This essentially allows multiple application containers running on the same cluster node to all bind to well known ports such as 80 without causing any conflicts.
+
+---
+class: center, middle
+
+The default behavior of Cilium is to assign both an `IPv6` and `IPv4` address to every endpoint. However, this behavior can be configured to only allocate an `IPv6` address with the `--enable-ipv4=false` option. If both an `IPv6` and `IPv4` address are assigned, either address can be used to reach the endpoint. The same behavior will apply with regard to policy rules, load-balancing, etc.
+
+---
+
+Three formats are available to configure network policies natively with Kubernetes:
+
+- The standard `NetworkPolicy` resource which at the time of this writing, supports to specify L3/L4 ingress policies with limited egress support marked as beta.
+
+- The extended `CiliumNetworkPolicy` format which is available as a `CustomResourceDefinition` which supports specification of policies at Layers 3-7 for both `ingress` and `egress`.
+
+- The `CiliumClusterwideNetworkPolicy` format which is a cluster-scoped `CustomResourceDefinition` for specifying cluster-wide policies to be enforced by `Cilium`. The specification is same as that of `CiliumNetworkPolicy` with no specified namespace.
+
+---
+class: center, middle
+
+*Cilium supports running multiple of these policy types at the same time. However caution should be applied when using multiple policy types at the same time, as it can be confusing to understand the complete set of allowed traffic across multiple policy types.*
+
+---
+class: center, middle
+
+### `CiliumNetworkPolicy`
+
+---
+class: center, middle
+
+The *CiliumNetworkPolicy* is very similar to the standard *NetworkPolicy*. The purpose is provide the functionality which is not yet supported in *NetworkPolicy*. Ideally all of the functionality will be merged into the standard resource format and this CRD will no longer be required.
+
+---
+class: center, middle
+
+#### Layer 3
+
+---
+
+Layer 3 policies can be specified using:
+
+- *Labels Based*
+
+- *Services based*
+
+- Entities Based
+
+- IP/CIDR based
+
+- DNS based
+
+.content-credits[https://docs.cilium.io/en/v1.10/policy/language/#layer-3-examples]
+
+---
+
+- **Labels Based**
+
+  Label-based L3 policy is used to establish policy between endpoints inside the cluster managed by Cilium. Label-based L3 policies are defined by using an Endpoint Selector inside a rule to choose what kind of traffic that can be received (on ingress), or sent (on egress). An empty Endpoint Selector allows all traffic.
+
+  The `EndpointSelector` is based on the Kubernetes `LabelSelector`. It is called `EndpointSelector` because it only applies to labels associated with an Endpoint.
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "l3-rule"
+spec:
+  endpointSelector:
+      matchLabels: {}
+  ingress:
+    - fromEndpoints:
+      - {}
+  egress:
+    - toEndpoints:
+      - {}
+```
+
+---
+class: center, middle
+
+##### Additional Label Requirements
+
+`fromRequires` & `toRequires`
+
+---
+
+- `fromRequires` field can be used to establish label requirements which serve as a foundation for any `fromEndpoints` relationship.
+
+- `fromRequires` is a list of additional constraints which must be met in order for the selected endpoints to be reachable.
+
+- These additional constraints do not grant access privileges by themselves, so to allow traffic there must also be rules which match `fromEndpoints`.
+
+- The same applies for egress policies, with `toRequires` and `toEndpoints`.
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+description: "For endpoints with env=prod, only allow if source also has label env=prod"
+metadata:
+  name: "requires-rule"
+specs:
+  - endpointSelector:
+      matchLabels:
+        env: prod
+    ingress:
+    - fromRequires:
+      - matchLabels:
+          env: prod
+```
+
+This `fromRequires` rule doesn’t allow anything on its own and needs to be combined with other rules to allow traffic.
+
+---
+
+- **Services based**
+
+  Services running in your cluster can be whitelisted in Egress rules. Currently Kubernetes Services without a Selector are supported when defined by their name and namespace or label selector.
+
+  `k8sService` or `k8sServiceSelector` selector is used.
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "service-rule"
+spec:
+  endpointSelector: {}
+  egress:
+  - toServices:
+    - k8sService:
+        serviceName: <>
+        namespace: <>
+    - k8sServiceSelector:
+        selector: {}
+```
+
+---
+class: center, middle
+
+### Layer 4
+
+---
+
+*Layer 4 policy can be specified at both `ingress` and `egress` using the `toPorts` field*.
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "l4-rule"
+spec:
+  endpointSelector: {}
+  egress:
+    - toPorts:
+      - ports:
+        - port: "80"
+          protocol: TCP
+```
+
+---
+
+You can combine this with:
+
+- Labels Selector
+
+- CIDR Selector
+
+---
+
+*Example*: L4 rule with Label/CIDR selector
+
+---
+class: center, middle
+
+### `CiliumClusterwideNetworkPolicy`
+
+---
+
+CiliumClusterwideNetworkPolicy is similar to CiliumNetworkPolicy, except:
+
+1. policies defined by `CiliumClusterwideNetworkPolicy` are non-namespaced and cluster-scoped
+
+2. it enables the use of [`Node Selector`](https://docs.cilium.io/en/v1.8/policy/intro/#nodeselector)
+
+---
+class: center, middle
+
+The `NodeSelector` is also based on the `EndpointSelector`, although rather than matching on labels associated with an Endpoint, it instead applies to labels associated with a node in the cluster.
+
+---
+
+*Challenge*: Define your [own `Cilium*NetworkPolicy`](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/challenges/02-cilium-policy)
 
 ---
 class: center, middle

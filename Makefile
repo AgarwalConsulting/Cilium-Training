@@ -41,10 +41,6 @@ vagrant-kind-ssh-node1:
 vagrant-kind-ssh-node2:
 	vagrant ssh -c "sudo docker exec -it kind-worker3 bash"
 
-kind-load-cilium-image:
-	docker pull cilium/cilium:v1.8.10
-	kind load docker-image cilium/cilium:v1.8.10
-
 k8s-kind-delete:
 	kind delete cluster --name kind
 

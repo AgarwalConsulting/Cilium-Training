@@ -1,0 +1,19 @@
+# This example enables all endpoints with the label role=crawler to communicate with all remote destinations inside the CIDR 192.0.2.0/24, but they must communicate using TCP on port 80.
+
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "cidr-l4-rule"
+spec:
+  endpointSelector:
+    matchLabels:
+      role: crawler
+  egress:
+  - toCIDR:
+    - 192.0.2.0/24
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+
+# The policy does not allow Endpoints without the label role=crawler to communicate with destinations in the CIDR 192.0.2.0/24. Furthermore, endpoints with the label role=crawler will not be able to communicate with destinations in the CIDR 192.0.2.0/24 on ports other than port 80.

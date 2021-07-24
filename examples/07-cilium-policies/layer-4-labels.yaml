@@ -1,0 +1,20 @@
+# This example enables all endpoints with the label role=frontend to communicate with all endpoints with the label role=backend, but they must communicate using TCP on port 80.
+
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "l4-rule"
+spec:
+  endpointSelector:
+    matchLabels:
+      role: backend
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        role: frontend
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+
+# Endpoints with other labels will not be able to communicate with the endpoints with the label role=backend, and endpoints with the label role=frontend will not be able to communicate with role=backend on ports other than 80.
