@@ -158,4 +158,4 @@
 - Install `helm`
 - Install `kind`
 
-We will be using a [`kind` based](https://docs.cilium.io/en/v1.8/gettingstarted/kind/) kubernetes cluster to setup our environment.
+We will be using a [`kind` based](https://docs.cilium.io/en/v1.10/gettingstarted/kind/) kubernetes cluster to setup our environment.
