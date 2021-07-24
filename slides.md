@@ -1312,6 +1312,12 @@ Review of [RV store application](https://github.com/AgarwalConsulting/Cilium-Tra
   > EndpointSlices are an API resource that can provide a more scalable alternative to Endpoints. Although conceptually quite similar to Endpoints
 
 ---
+class: center, middle
+
+What do the following do?
+
+---
+class: center, middle
 
 ```yaml
 matchLabels:
@@ -1319,12 +1325,14 @@ matchLabels:
 ```
 
 ---
+class: center, middle
 
 ```yaml
 matchLabels: {}
 ```
 
 ---
+class: center, middle
 
 *A Kubernetes Service is an abstraction which defines a logical set of Pods and a policy by which to access them - sometimes called a micro-service.*
 
@@ -1344,6 +1352,8 @@ Kubernetes also has a concept of a `NetworkPolicy`.
 class: center, middle
 
 ### Network Policy
+
+.content-credits[https://www.youtube.com/watch?v=3gGpMmYeEO8]
 
 ---
 class: center, middle
@@ -1435,6 +1445,7 @@ The entities that a Pod can communicate with are identified through a combinatio
   if at least one policy is allowing it. Policy rules are additive. (ORed not ANDed)
 
 ---
+class: center, middle
 
 ```yaml
 kind:     NetworkPolicy
@@ -1457,6 +1468,8 @@ class: center, middle
 ##### Restricting port numbers
 
 ---
+
+Limitations of port numbers
 
 - Can't use service ports in policies, yet
 
@@ -1575,6 +1588,7 @@ class: center, middle
 - controls the traffic from selected pods
 
 ---
+class: center, middle
 
 ```yaml
 kind:     NetworkPolicy
@@ -1874,9 +1888,10 @@ spec:
 ---
 class: center, middle
 
-### Layer 4
+#### Layer 4
 
 ---
+class: center, middle
 
 *Layer 4 policy can be specified at both `ingress` and `egress` using the `toPorts` field*.
 
@@ -1907,6 +1922,7 @@ You can combine this with:
 - CIDR Selector
 
 ---
+class: center, middle
 
 *Example*: L4 rule with Label/CIDR selector
 
@@ -1930,7 +1946,174 @@ The `NodeSelector` is also based on the `EndpointSelector`, although rather than
 
 ---
 
+Eg.
+
+```yaml
+spec:
+  nodeSelector:
+    matchLabels:
+      type: worker
+```
+
+.content-credits[https://docs.cilium.io/en/v1.8/policy/language/#hostpolicies]
+
+---
+class: center, middle
+
 *Challenge*: Define your [own `Cilium*NetworkPolicy`](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/challenges/02-cilium-policy)
+
+---
+class: center, middle
+
+#### Layer 7
+
+---
+class: center, middle
+
+*Layer 7 policy rules are embedded into Layer 4 Examples rules and can be specified for ingress and egress.*
+
+.content-credits[https://docs.cilium.io/en/v1.10/policy/language/#layer-7-examples]
+
+---
+class: center, middle
+
+Each member consists of a list of application protocol rules. A layer 7 request is permitted if at least one of the rules matches. If no rules are specified, then all traffic is permitted.
+
+---
+class: center, middle
+
+*Caveat*: If a layer 4 rule is specified in the policy, and a similar layer 4 rule with layer 7 rules is also specified, then the layer 7 portions of the latter rule will have no effect.
+
+---
+class: center, middle
+
+##### HTTP
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "rule1"
+spec:
+  description: "Allow HTTP GET /public from env=prod to app=service"
+  endpointSelector:
+    app: service
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+      env: prod
+  toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      rules:
+        http:
+        - method: "GET"
+          path: "/public"
+```
+
+Allows `GET` requests to the URL `/public` to be allowed to endpoints with the labels `env:prod`, but requests to any other URL, or using another method, will be rejected.
+
+---
+class: center, middle
+
+##### Kafka
+
+---
+
+There are two ways to specify the Kafka rules. We can:
+
+- choose to specify a high-level `produce` or `consume` role to a topic
+
+- choose to specify more low-level Kafka protocol specific `apiKeys`.
+
+---
+class: center, middle
+
+*Writing rules based on Kafka roles is easier and covers most common use cases, however if more granularity is needed then users can alternatively write rules using specific apiKeys.*
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "rule1"
+spec:
+  description: "enable empire-hq to produce to empire-announce and deathstar-plans"
+  endpointSelector:
+    matchLabels:
+      app: kafka
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: empire-hq
+    toPorts:
+    - ports:
+      - port: "9092"
+        protocol: TCP
+      rules:
+        kafka:
+        - role: "produce"
+          topic: "deathstar-plans"
+        - role: "produce"
+          topic: "empire-announce"
+```
+
+---
+class: center, middle
+
+*Challenge*: Define Layer 7 policies for `examples/06-kafka-app/app.yaml`.
+
+---
+class: center, middle
+
+### Deny Policies
+
+---
+class: center, middle
+
+*Deny policies, available and enabled by default since Cilium 1.9, allows to explicitly restrict certain traffic to and from a Pod.*
+
+---
+
+- Deny policies take precedence over allow policies, regardless of whether they are a Cilium Network Policy, a Clusterwide Cilium Network Policy or even a Kubernetes Network Policy.
+
+- Similarly to “allow” policies, Pods will enter default-deny mode as soon a single policy selects it.
+
+- If multiple allow and deny policies are applied to the same pod, the following table represents the expected enforcement for that Pod:
+
+---
+class: center, middle
+
+![Deny policy table](assets/images/deny-policies.png)
+
+.content-credits[https://docs.cilium.io/en/v1.10/policy/language/#deny-policies]
+
+---
+
+Eg.
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: "external-lockdown"
+spec:
+  endpointSelector: {}
+  ingressDeny:
+  - fromEntities:
+    - "world"
+  ingress:
+  - fromEntities:
+    - "all"
+```
 
 ---
 class: center, middle
