@@ -816,6 +816,8 @@ class: center, middle
 
 ![BPF Offload](assets/images/bpf_offload.png)
 
+*Networking programs in BPF, in particular for `tc` and `XDP` do have an offload-interface to hardware in the kernel in order to execute BPF code directly on the NIC.*
+
 ---
 class: center, middle
 
