@@ -1,0 +1,13 @@
+kind:     NetworkPolicy
+apiVersion:  networking.k8s.io/v1
+metadata:
+  name: orders-app
+spec:
+  podSelector:
+    matchLabels:
+      app: orders
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: order-simulator

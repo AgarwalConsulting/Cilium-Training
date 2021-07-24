@@ -1395,7 +1395,7 @@ class: center, middle
 kind:     NetworkPolicy
 apiVersion:  networking.k8s.io/v1
 metadata:
-  name: "Disallow all"
+  name: my-policy
 spec:
   podSelector: {...}
   ingress:
@@ -1428,11 +1428,39 @@ The entities that a Pod can communicate with are identified through a combinatio
 
   if there are policies selecting the pod, but none of them have any rules allowing it.
 
-> NetworkPolicy, per spec, defines rules that allow traffic.
+  > NetworkPolicy, per spec, defines only rules that allow traffic.
 
 3. traffic is `allowed`
 
-  if at least one policy allowing it.
+  if at least one policy is allowing it. Policy rules are additive. (ORed not ANDed)
+
+---
+
+```yaml
+kind:     NetworkPolicy
+apiVersion:  networking.k8s.io/v1
+metadata:
+  name: default-deny-all-ingress
+spec:
+  podSelector: {} # select all pods in the namespace
+  ingress: [] # Empty array = no rules; nothing is whitelisted
+```
+
+---
+class: center, middle
+
+*Example:* Allowing only the backend service to talk to the database
+
+---
+class: center, middle
+
+##### Restricting port numbers
+
+---
+
+- Can't use service ports in policies, yet
+
+- Use `containerPort` in the podSpec
 
 ---
 class: center, middle
@@ -1450,6 +1478,230 @@ The main features of Kubernetes network policies are:
 - Policy rules can specify the traffic that is allowed to/from other pods, namespaces, or CIDRs
 
 - Policy rules can specify protocols (`TCP`, `UDP`, `SCTP`), named ports or port numbers
+
+---
+
+##### Network policies are scoped to namespace
+
+- Network policies are applied to pods in the namespace it's deployed to
+
+  - `spec.podSelector` does not select pods from other namespaces
+
+---
+class: center, middle
+
+How to allow traffic from other namespaces then?
+
+---
+
+- `from.podSelector` matches only to pods in the current namespace
+
+- need a new kind of selector: `namespaceSelector`
+
+  - selects namespaces, using `labels`
+
+---
+class: center, middle
+
+Who is labelling their namespaces? ✋
+
+---
+class: center, middle
+
+*Example*: Namespace selector
+
+---
+
+##### Limitation of `namespaceSelector`
+
+- allowing only `some` pods from other namespaces
+
+  - this isn't possible today
+
+---
+
+##### 3 ways to specify where the traffic can come from / go to
+
+- `podSelector`
+
+- `namespaceSelector`
+
+- *`ipBlock`*
+
+---
+class: center, middle
+
+##### `ipBlock` selector
+
+---
+
+- `ipBlock` allows traffic from/to a CIDR
+
+Eg.
+
+```yaml
+from:
+  - ipBlock:
+    cidr: 10.56.0.0/16
+```
+
+Allows traffic from any pod with IP 10.56.x.x.
+
+---
+
+- You can also restrict a block
+
+Eg.
+
+```yaml
+from:
+  - ipBlock:
+      cidr: 10.0.0.0/8
+      except:
+      - 10.11.12.0/24
+```
+
+allow 10.x.x.x, but deny 10.11.12.x
+
+---
+class: center, middle
+
+#### `egress` rules
+
+---
+
+- almost identical to ingress rules
+
+- controls the traffic from selected pods
+
+---
+
+```yaml
+kind:     NetworkPolicy
+apiVersion:  networking.k8s.io/v1
+metadata:
+  name: default-deny-all-egress
+spec:
+  podSelector: {} # select all pods in the namespace
+  policyTypes: # Need this if you have egress rules
+    - Egress
+  egress: [] # Empty array = no rules; nothing is whitelisted
+```
+
+---
+class: center, middle
+
+The `policyTypes` field indicates whether or not the given policy applies to `ingress` traffic to selected pod, `egress` traffic from selected pods, or both. If no `policyTypes` are specified on a `NetworkPolicy` then by default `Ingress` will always be set and `Egress` will be set if the `NetworkPolicy` has any `egress` rules.
+
+---
+class: center, middle
+
+Each `NetworkPolicy` includes a `policyTypes` list which may include either `Ingress`, `Egress`, or both.
+
+---
+class: center, middle
+
+*Example*: Allow the frontend to talk only to the backend
+
+---
+
+`egress` policies actually block dns resolution
+
+You either have to:
+
+- allow all dns traffic (easier)
+
+- add `egress` rule with the IP address of `kube-dns` (harder)
+
+---
+
+class: center, middle
+
+*Example*: Allow the frontend to talk only to the backend & dns
+
+---
+
+class: center, middle
+
+*Example*: Allow only local egress
+
+---
+class: center, middle
+
+*Challenge*: Define your [own `NetworkPolicy`](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/challenges/01-network-policy)
+
+---
+
+##### Network Policy is a connection filter
+
+- does not apply to packets
+
+- does not terminate established connections
+
+The spec doesn't dictate that the connections should be terminated.
+
+---
+
+##### Network policies add minimal latency
+
+- depends on the network plugin
+
+  - iptables vs overlay
+  - implementation, caching differences
+
+- can depend on number of policies deployed
+
+- sub `1ms` overhead!
+
+---
+class: center, middle
+
+#### Best Practices for Network Policies
+
+---
+
+use `default-deny-all` rules
+
+- first block all ingress/egress in a namespace
+
+- then start whitelisting for each application
+
+---
+
+understand rule evaluation
+
+- rules are `OR'ed` (not `AND'ed`)
+  - additivity may cause unexpected results
+
+- be explicit about empty vs null fields
+
+---
+
+#### Test your policies
+
+- try what's allowed / blocked
+
+- test external connectivity
+
+  - ingress: should I allow traffic from external LB?
+
+  - egress: should I allow connections to external services?
+
+- test with other namespaces
+
+  - allow connections from/to another namespace?
+
+- use `kubectl describe` to verify the rule syntax
+
+---
+class: center, middle
+
+*Challenge*: Define your [own `NetworkPolicy`](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/challenges/01-network-policy) for egress traffic as well
+
+---
+class: center, middle
+
+*Further Reading*: https://kubernetes.io/docs/concepts/services-networking/network-policies/
 
 ---
 class: center, middle

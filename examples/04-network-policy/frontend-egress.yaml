@@ -1,0 +1,20 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: frontend
+spec:
+  podSelector:
+    matchLabels:
+      tier: frontend
+  policyTypes:
+    - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          tier: backend
+
+### What do you think would happen if I?
+# ```bash
+# kubectl exec frontend-pod -- curl http://backend.xx.svc.local
+# ```

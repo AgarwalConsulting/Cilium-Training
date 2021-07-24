@@ -1,0 +1,16 @@
+kind:     NetworkPolicy
+apiVersion:  networking.k8s.io/v1
+metadata:
+  name: orders-db-only
+spec:
+  podSelector:
+    matchLabels:
+      app: mongo
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: orders
+        ports:
+        - port: 27017
+          protocol: TCP
