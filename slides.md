@@ -878,6 +878,13 @@ class: center, middle
 ---
 class: center, middle
 
+Depending on the Linux kernel version being used, the eBPF datapath can implement a varying feature set fully in eBPF. If certain required capabilities are not available, the functionality is provided using a legacy iptables implementation.
+
+.content-credits[[Features matrix](https://docs.cilium.io/en/v1.8/operations/system_requirements/#features-kernel-matrix)]
+
+---
+class: center, middle
+
 `More info on BPF` - [Cilium's BPF guide](https://docs.cilium.io/en/v1.8/bpf/#bpf-guide)
 
 ---
@@ -1170,6 +1177,105 @@ class: center, middle
 class: center, middle
 
 ![Masquerade](assets/images/masquerade.png)
+
+---
+class: center, middle
+
+## Network Security
+
+---
+class: center, middle
+
+*Cilium provides security on multiple levels. Each can be used individually or combined together.*
+
+---
+
+- Identity-based: Connectivity policies between endpoints (Layer 3), e.g. any endpoint with label `role=frontend` can connect to any endpoint with label `role=backend`.
+
+- Restriction of accessible ports (Layer 4) for both incoming and outgoing connections, e.g. endpoint with label `role=frontend` can only make outgoing connections on port `443` (https) and endpoint `role=backend` can only accept connections on port `443` (https).
+
+- Fine grained access control on application protocol level to secure HTTP and remote procedure call (RPC) protocols, e.g the endpoint with label `role=frontend` can only perform the REST API call `GET /userdata/[0-9]+`, all other API interactions with `role=backend` are restricted.
+
+---
+class: center, middle
+
+### Identity-based
+
+---
+class: center, middle
+
+*Traditionally security enforcement architectures have been based on IP address filters.*
+
+---
+class: center, middle
+
+Cilium entirely separates security from network addressing. Instead, security is based on the identity of a pod, which is derived through labels. This identity can be shared between pods.
+
+---
+class: center, middle
+
+![Identity](assets/images/identity.png)
+
+---
+class: center, middle
+
+### Policy enforcement
+
+---
+class: center, middle
+
+All security policies are described assuming stateful policy enforcement for session based protocols.
+
+---
+class: center, middle
+
+This means that the intent of the policy is to describe allowed direction of connection establishment.
+
+---
+class: center, middle
+
+If the policy allows `A => B` then reply packets from `B` to `A` are automatically allowed as well. However, `B` is not automatically allowed to initiate connections to `A`. If that outcome is desired, then both directions must be explicitly allowed.
+
+---
+class: center, middle
+
+Security policies may be enforced at `ingress` or `egress`.
+
+---
+
+- For `ingress`, this means that each cluster node verifies all incoming packets and determines whether the packet is allowed to be transmitted to the intended endpoint.
+
+- For `egress` each cluster node verifies outgoing packets and determines whether the packet is allowed to be transmitted to its intended destination.
+
+---
+class: center, middle
+
+#### Default Security Policy?
+
+---
+class: center, middle
+
+*allow all communication!*
+
+---
+class: center, middle
+
+### Proxy Injection
+
+---
+class: center, middle
+
+Cilium is capable of transparently injecting a Layer 4 proxy into any network connection. This is used as the foundation to enforce higher level network policies (like DNS based and Layer 7 policies).
+
+---
+class: center, middle
+
+## Kubernetes Integration
+
+---
+class: center, middle
+
+![Finally, yes!](assets/images/finally-meme.jpg)
 
 ---
 class: center, middle
