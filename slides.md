@@ -240,13 +240,6 @@ class: center, middle
 
 ---
 
-- Bridge + Veth + iptables
-- Other solutions exist
-- Overlay & Underlay
-- eth0 + loopback
-
----
-
 More info:
 
 ```bash
@@ -817,6 +810,11 @@ class: center, middle
 ![network-path-layer-2](assets/images/network-path-layer-2.png)
 
 .content-credits[https://www.youtube.com/watch?v=Kmm8Hl57WDU]
+
+---
+class: center, middle
+
+![BPF Offload](assets/images/bpf_offload.png)
 
 ---
 class: center, middle
