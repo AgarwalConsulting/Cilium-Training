@@ -778,7 +778,7 @@ class: center, middle
 ---
 class: center, middle
 
-*e**X**press **D**ata **P**ath*
+e**X**press **D**ata **P**ath
 
 ---
 class: center, middle
