@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-simulator-deployment
+  labels:
+    app: order-simulator
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: order-simulator
+  template:
+    metadata:
+      labels:
+        app: order-simulator
+    spec:
+      containers:
+      - name: order-simulator
+        image: agarwalconsulting/rvstore-order-simulator:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 500m
+            memory: 100Mi
+        envFrom:
+        - configMapRef:
+            name: rvstore-config

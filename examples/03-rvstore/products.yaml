@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: products-deployment
+  labels:
+    app: products
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: products
+  template:
+    metadata:
+      labels:
+        app: products
+    spec:
+      containers:
+      - name: products
+        image: agarwalconsulting/rvstore-product-api:v1
+        ports:
+        - containerPort: 9001
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 500m
+            memory: 100Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rvstore-product-api
+  name: rvstore-product-api
+spec:
+  ports:
+  - port: 9001
+    targetPort: 9001
+  selector:
+    app: products

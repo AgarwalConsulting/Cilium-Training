@@ -106,3 +106,9 @@ build-and-push-image:
 
 analyze-vxlan:
 	tshark --color -i eth0 -d udp.port=8472,vxlan -f "port 8472"
+
+deploy-rv-store:
+	ls ./examples/03-rvstore/*.yaml | xargs -n 1 kubectl apply -f
+
+remove-rv-store:
+	ls ./examples/03-rvstore/*.yaml | xargs -n 1 kubectl delete -f

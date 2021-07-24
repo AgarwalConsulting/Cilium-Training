@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rvstore-ui-deployment
+  labels:
+    app: rvstore-ui
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: rvstore-ui
+  template:
+    metadata:
+      labels:
+        app: rvstore-ui
+    spec:
+      containers:
+      - name: rvstore-ui
+        image: agarwalconsulting/rvstore-ui:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 500m
+            memory: 100Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rvstore-ui
+  name: rvstore-ui
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: rvstore-ui

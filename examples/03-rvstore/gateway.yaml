@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: agarwalconsulting/rvstore-api-gateway:v2
+        ports:
+        - containerPort: 9000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 500m
+            memory: 100Mi
+        envFrom:
+        - configMapRef:
+            name: rvstore-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rvstore-api-gateway
+  name: rvstore-api-gateway
+spec:
+  ports:
+  - port: 9000
+    targetPort: 9000
+  selector:
+    app: gateway

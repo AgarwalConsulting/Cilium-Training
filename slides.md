@@ -1280,6 +1280,180 @@ class: center, middle
 ---
 class: center, middle
 
+In just a moment...
+
+---
+class: center, middle
+
+Review of [RV store application](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/examples/03-rvstore) in K8s cluster with default CNI
+
+---
+
+### Understanding K8s terminology
+
+- Node
+
+- Pod
+
+---
+
+- Service
+
+  > Service is an abstraction which defines a logical set of Pods and a policy by which to access them
+
+  - They work using `Selectors` & `Labels`
+
+- Endpoint
+
+  > Endpoints is a collection of endpoints that implement the actual service.
+
+- EndpointSlices
+
+  > EndpointSlices are an API resource that can provide a more scalable alternative to Endpoints. Although conceptually quite similar to Endpoints
+
+---
+
+```yaml
+matchLabels:
+  app: shopping
+```
+
+---
+
+```yaml
+matchLabels: {}
+```
+
+---
+
+*A Kubernetes Service is an abstraction which defines a logical set of Pods and a policy by which to access them - sometimes called a micro-service.*
+
+---
+class: center, middle
+
+Review of [RV store application](https://github.com/AgarwalConsulting/Cilium-Training/tree/master/examples/03-rvstore) in K8s cluster with Cilium
+
+---
+class: center, middle
+
+Kubernetes also has a concept of a `NetworkPolicy`.
+
+.content-credits[https://kubernetes.io/docs/concepts/services-networking/network-policies/]
+
+---
+class: center, middle
+
+### Network Policy
+
+---
+class: center, middle
+
+Network policy is the primary tool for securing a Kubernetes network. It allows you to easily restrict the network traffic in your cluster so only the traffic that you want to flow is allowed.
+
+---
+class: center, middle
+
+*Historically in enterprise networks, network security was provided by designing a physical topology of network devices (switches, routers, firewalls) and their associated configuration. The physical topology defined the security boundaries of the network. In the first phase of virtualization, the same network and network device constructs were virtualized in the cloud, and the same techniques for creating specific network topologies of (virtual) network devices were used to provide network security. Adding new applications or services often required additional network design to update the network topology and network device configuration to provide the desired security.*
+
+---
+class: center, middle
+
+In contrast, the Kubernetes network model defines a “flat” network in which every pod can communicate with all other pods in the cluster using pod IP addresses.
+
+*This approach massively simplifies network design and allows new workloads to be scheduled dynamically anywhere in the cluster with no dependencies on the network design.*
+
+---
+class: center, middle
+
+NetworkPolicies are an application-centric construct which allow you to specify how a pod is allowed to communicate with various network "entities".
+
+---
+class: center, middle
+
+*If you want to control traffic flow at the IP address or port level (OSI layer 3 or 4), then you might consider using Kubernetes NetworkPolicies for particular applications in your cluster.*
+
+---
+
+#### Anatomy of a Network Policy
+
+A NetworkPolicy is a YAML file that defines a set of rules for traffic to and from a pod.
+
+1. Which pods does it apply to?
+
+2. for which direction? (ingress, egress)
+
+3. Rules for allowing:
+
+  - ingress -> who can connect to this Pod?
+
+  - egress -> where can this Pod connect to?
+
+---
+class: center, middle
+
+```yaml
+kind:     NetworkPolicy
+apiVersion:  networking.k8s.io/v1
+metadata:
+  name: "Disallow all"
+spec:
+  podSelector: {...}
+  ingress:
+  - ...
+  - ...
+  egress:
+  - ...
+  - ...
+```
+
+---
+
+The entities that a Pod can communicate with are identified through a combination of the following 3 identifiers:
+
+- Other pods that are allowed (exception: a pod cannot block access to itself)
+
+- Namespaces that are allowed
+
+- IP blocks (exception: traffic to and from the node where a Pod is running is always allowed, regardless of the IP address of the Pod or the node)
+
+---
+
+#### Rules of `NetworkPolicy`
+
+1. traffic is `allowed`
+
+  unless there is a `NetworkPolicy` selecting the pod.
+
+2. traffic is `denied`
+
+  if there are policies selecting the pod, but none of them have any rules allowing it.
+
+> NetworkPolicy, per spec, defines rules that allow traffic.
+
+3. traffic is `allowed`
+
+  if at least one policy allowing it.
+
+---
+class: center, middle
+
+*Kubernetes itself does not enforce network policies, and instead delegates their enforcement to network plugins.*
+
+---
+
+The main features of Kubernetes network policies are:
+
+- Policies are namespace scoped (i.e. you create them within the context of a specific namespace just like, for example, pods)
+
+- Policies are applied to pods using label selectors
+
+- Policy rules can specify the traffic that is allowed to/from other pods, namespaces, or CIDRs
+
+- Policy rules can specify protocols (`TCP`, `UDP`, `SCTP`), named ports or port numbers
+
+---
+class: center, middle
+
 Code
 https://github.com/AgarwalConsulting/Cilium-Training
 

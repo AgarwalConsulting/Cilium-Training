@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rvstore-auth-deployment
+  labels:
+    app: rvstore-auth
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: rvstore-auth
+  template:
+    metadata:
+      labels:
+        app: rvstore-auth
+    spec:
+      containers:
+      - name: rvstore-auth
+        image: agarwalconsulting/rvstore-auth-api:v1
+        ports:
+        - containerPort: 9003
+        resources:
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 500m
+            memory: 100Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rvstore-auth-api
+  name: rvstore-auth-api
+spec:
+  ports:
+  - port: 9003
+    targetPort: 9003
+  selector:
+    app: rvstore-auth
