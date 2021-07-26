@@ -89,7 +89,8 @@
   - Event monitoring with metadata
   - Policy decision tracing
   - Metrics export via Prometheus
-  - Introduction to Hubble
+
+- Introduction to Hubble
   - Hubble Configuration
   - Setting up Hubble Metrics with Grafana
 
