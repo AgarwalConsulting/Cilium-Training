@@ -1,0 +1,18 @@
+## Allow only fe pods to connect to be pods
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: only-fe-connects-to-be
+  namespace: search-app
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: frontend
+      ports:
+        - protocol: TCP
+          port: 8080

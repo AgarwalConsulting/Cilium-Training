@@ -4,12 +4,12 @@ metadata:
   namespace: prod-storage
   name: allow-prod-apps
 spec:
-  podSelector: {}
+  podSelector: {} # All pods in "prod-storage"
   ingress:
     - from:
       - namespaceSelector:
         matchLabels:
-          purpose: prod
+          purpose: prod # Can be accessed by pods in namespaces with label "purpose=prod"
 
 ---
 

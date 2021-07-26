@@ -2031,6 +2031,20 @@ Allows `GET` requests to the URL `/public` to be allowed to endpoints with the l
 ---
 class: center, middle
 
+What about gRPC?
+
+---
+class: center, middle
+
+```yaml
+http:
+- method: "POST"
+  path: "/cloudcity.DoorManager/GetName"
+```
+
+---
+class: center, middle
+
 ##### Kafka
 
 ---

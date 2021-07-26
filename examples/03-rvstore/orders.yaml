@@ -5,7 +5,7 @@ metadata:
   labels:
     app: orders
 spec:
-  replicas: 1
+  replicas: 4
   revisionHistoryLimit: 2
   selector:
     matchLabels:

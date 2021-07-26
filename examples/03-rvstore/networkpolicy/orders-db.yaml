@@ -7,10 +7,10 @@ spec:
     matchLabels:
       app: mongo
   ingress:
-    - from:
-      - podSelector:
-          matchLabels:
-            app: orders
-        ports:
-        - port: 27017
-          protocol: TCP
+  - from:
+    - podSelector:
+        matchLabels:
+          app: orders
+    ports:
+      - port: 27017
+        protocol: TCP
