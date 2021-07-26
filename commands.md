@@ -23,6 +23,8 @@ bpftool net
 
 ## Networking Analyzing
 
+iptables-save
+
 ip route
 
 iptables --list

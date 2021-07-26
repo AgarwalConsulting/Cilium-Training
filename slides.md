@@ -2042,6 +2042,8 @@ http:
   path: "/cloudcity.DoorManager/GetName"
 ```
 
+.content-credits[https://docs.cilium.io/en/v1.10/gettingstarted/grpc/]
+
 ---
 class: center, middle
 
