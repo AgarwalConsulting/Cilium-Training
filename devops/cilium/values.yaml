@@ -7,20 +7,20 @@ operator:
   enabled: true
 
 hubble:
-  enabled: true
-  metrics:
-    enabled:
-      # - dns
-      - dns:query;ignoreAAAA
-      - drop
-      - tcp
-      - flow
-      - icmp
-      - http
-    # enabled: ~
+  enabled: false
+  # metrics:
+  #   enabled:
+  #     - dns
+  #     - drop
+  #     - tcp
+  #     - flow
+  #     - icmp
+  #     - http
+  #     # - dns:query;ignoreAAAA
+  #   # enabled: ~
 
-  relay:
-    enabled: true
+  # relay:
+  #   enabled: true
 
-  ui:
-    enabled: true
+  # ui:
+  #   enabled: true
