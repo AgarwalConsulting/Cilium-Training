@@ -793,6 +793,16 @@ This achieves the best possible packet processing performance since the program 
 *XDP is a further step in evolution of BPF and enables to run a specific flavor of BPF programs from the network driver with direct access to the packet's DMA buffer.*
 
 ---
+class: center, middle
+
+How many layers are there in the OSI model?
+
+---
+class: center, middle
+
+![OSI Layers](assets/images/osi-layers.png)
+
+---
 
 class: center, middle
 
