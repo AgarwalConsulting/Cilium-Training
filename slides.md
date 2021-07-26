@@ -2144,6 +2144,46 @@ spec:
 ---
 class: center, middle
 
+## Observability with Cilium
+
+---
+class: center, middle
+
+*Cilium and Hubble can both be configured to serve Prometheus metrics.*
+
+---
+class: center, middle
+
+### Cilium metrics
+
+---
+class: center, middle
+
+Cilium metrics, monitors the state of Cilium itself.
+
+---
+
+Insights into:
+
+- `cilium-agent`
+
+- `cilium-envoy`
+
+- `cilium-operator`
+
+---
+class: center, middle
+
+### Hubble Metrics
+
+---
+class: center, middle
+
+Hubble metrics, monitors the network behavior of your Cilium-managed Kubernetes pods with respect to connectivity and security.
+
+---
+class: center, middle
+
 Code
 https://github.com/AgarwalConsulting/Cilium-Training
 

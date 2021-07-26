@@ -1,0 +1,26 @@
+# Values: https://github.com/cilium/cilium/blob/master/install/kubernetes/cilium/values.yaml
+
+prometheus:
+  enabled: true
+
+operator:
+  enabled: true
+
+hubble:
+  enabled: true
+  metrics:
+    enabled:
+      # - dns
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
+    # enabled: ~
+
+  relay:
+    enabled: true
+
+  ui:
+    enabled: true

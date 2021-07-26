@@ -87,10 +87,16 @@ helm-repo-add:
 	helm repo add cilium https://helm.cilium.io/
 
 helm-install-cilium:
-	helm install cilium cilium/cilium --version 1.10.3 --namespace kube-system
+	helm install -n kube-system -f devops/cilium/values.yaml cilium cilium/cilium --version 1.10.3
+
+helm-uninstall-cilium:
+	helm remove -n kube-system cilium
 
 install-cilium:
 	cilium install
+
+uninstall-cilium:
+	cilium uninstall
 
 test-cilium-setup:
 	cilium status --wait
@@ -108,3 +114,12 @@ deploy-rv-store:
 
 remove-rv-store:
 	ls ./examples/03-rvstore/*.yaml | xargs -n 1 kubectl delete -f
+
+deploy-prom-graf:
+	kubectl apply -f https://raw.githubusercontent.com/cilium/cilium/v1.10/examples/kubernetes/addons/prometheus/monitoring-example.yaml
+
+remove-prom-graf:
+	kubectl delete -f https://raw.githubusercontent.com/cilium/cilium/v1.10/examples/kubernetes/addons/prometheus/monitoring-example.yaml
+
+grafana-ui:
+	kubectl -n cilium-monitoring port-forward service/grafana --address 0.0.0.0 --address :: 3000:3000
