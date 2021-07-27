@@ -2184,7 +2184,27 @@ Hubble metrics, monitors the network behavior of your Cilium-managed Kubernetes 
 ---
 class: center, middle
 
-Demo: Accessing Metrics through Grafana
+*Demo*: Accessing Metrics through Grafana
+
+---
+class: center, middle
+
+### Hubble UI
+
+---
+class: center, middle
+
+*Demo*: Observing through the Hubble UI
+
+---
+class: center, middle
+
+### Hubble Relay
+
+---
+class: center, middle
+
+*Demo*: Observing through the Hubble Relay + Cilium CLI
 
 ---
 class: center, middle

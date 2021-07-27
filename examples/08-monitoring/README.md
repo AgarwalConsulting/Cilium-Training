@@ -29,7 +29,7 @@ make deploy-prom-graf
 Port forward to local:
 
 ```bash
-make grafana-ui
+make k8s-pf-grafana-ui
 ```
 
 Access the UI at http://localhost:3000.

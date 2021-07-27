@@ -121,5 +121,11 @@ deploy-prom-graf:
 remove-prom-graf:
 	kubectl delete -f https://raw.githubusercontent.com/cilium/cilium/v1.10/examples/kubernetes/addons/prometheus/monitoring-example.yaml
 
-grafana-ui:
+k8s-pf-grafana-ui:
 	kubectl -n cilium-monitoring port-forward service/grafana --address 0.0.0.0 --address :: 3000:3000
+
+k8s-pf-hubble-ui:
+	kubectl port-forward -n kube-system svc/hubble-ui --address 0.0.0.0 --address :: 12000:80
+
+k8s-pf-hubble-relay:
+	kubectl port-forward -n kube-system svc/hubble-relay --address 0.0.0.0 --address :: 4245:80
