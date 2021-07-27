@@ -1644,6 +1644,10 @@ You either have to:
 
 ---
 
+- allow only `kube-dns` from any namespace
+
+---
+
 class: center, middle
 
 *Example*: Allow the frontend to talk only to the backend & dns
@@ -2223,6 +2227,11 @@ class: center, middle
 class: center, middle
 
 *Demo*: Observing through the Hubble Relay + Cilium CLI
+
+---
+class: center, middle
+
+## Troubleshooting
 
 ---
 class: center, middle

@@ -22,3 +22,5 @@ spec:
       protocol: "UDP"
     # - port: 53
     #   protocol: "TCP"
+
+# Will this policy actually allow frontend to egress to backend?

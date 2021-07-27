@@ -1,3 +1,3 @@
 # Star Wars app
 
-This is a sample micro-service using Kafka. App deployment taken from: https://github.com/cilium/cilium/blob/master/examples/kubernetes-kafka/kafka-sw-app.yaml.
+This is a sample micro-service using Kafka. App deployment taken from: https://docs.cilium.io/en/v1.10/gettingstarted/kafka/.
