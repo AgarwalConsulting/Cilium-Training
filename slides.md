@@ -1772,12 +1772,25 @@ class: center, middle
 ---
 class: center, middle
 
+[Online Policy Editor](https://editor.cilium.io/)
+
+---
+class: center, middle
+
 ### `CiliumNetworkPolicy`
 
 ---
 class: center, middle
 
 The *CiliumNetworkPolicy* is very similar to the standard *NetworkPolicy*. The purpose is provide the functionality which is not yet supported in *NetworkPolicy*. Ideally all of the functionality will be merged into the standard resource format and this CRD will no longer be required.
+
+---
+class: center, middle
+
+```yaml
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+```
 
 ---
 class: center, middle
