@@ -2135,15 +2135,6 @@ class: center, middle
 
 - Similarly to “allow” policies, Pods will enter default-deny mode as soon a single policy selects it.
 
-- If multiple allow and deny policies are applied to the same pod, the following table represents the expected enforcement for that Pod:
-
----
-class: center, middle
-
-![Deny policy table](assets/images/deny-policies.png)
-
-.content-credits[https://docs.cilium.io/en/v1.10/policy/language/#deny-policies]
-
 ---
 
 Eg.
@@ -2162,6 +2153,15 @@ spec:
   - fromEntities:
     - "all"
 ```
+
+---
+class: center, middle
+
+If multiple allow and deny policies are applied to the same pod, the following table represents the expected enforcement for that Pod:
+
+![Deny policy table](assets/images/deny-policies.png)
+
+.content-credits[https://docs.cilium.io/en/v1.10/policy/language/#deny-policies]
 
 ---
 class: center, middle
