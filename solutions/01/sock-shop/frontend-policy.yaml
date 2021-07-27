@@ -1,0 +1,13 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: frontend-policy
+  namespace: sock-shop
+spec:
+  podSelector:
+    matchLabels:
+      name: front-end
+  ingress:
+    - from:
+      - ipBlock:
+        - cidr: 0.0.0.0/0
