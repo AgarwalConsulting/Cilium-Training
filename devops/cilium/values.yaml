@@ -6,21 +6,24 @@ prometheus:
 operator:
   enabled: true
 
+  prometheus:
+    enabled: true
+
 hubble:
-  enabled: false
-  # metrics:
-  #   enabled:
-  #     - dns
-  #     - drop
-  #     - tcp
-  #     - flow
-  #     - icmp
-  #     - http
-  #     # - dns:query;ignoreAAAA
-  #   # enabled: ~
+  enabled: true
+  metrics:
+    # enabled:
+    #   - dns
+    #   - drop
+    #   - tcp
+    #   - flow
+    #   - icmp
+    #   - http
+      # - dns:query;ignoreAAAA
+    enabled: ~
 
-  # relay:
-  #   enabled: true
+  relay:
+    enabled: true
 
-  # ui:
-  #   enabled: true
+  ui:
+    enabled: true
