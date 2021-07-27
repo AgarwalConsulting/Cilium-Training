@@ -89,6 +89,9 @@ helm-repo-add:
 helm-install-cilium:
 	helm install -n kube-system -f devops/cilium/values.yaml cilium cilium/cilium --version 1.10.3
 
+helm-update-cilium:
+	helm upgrade -n kube-system -f devops/cilium/values.yaml cilium cilium/cilium --version 1.10.3
+
 helm-uninstall-cilium:
 	helm remove -n kube-system cilium
 
