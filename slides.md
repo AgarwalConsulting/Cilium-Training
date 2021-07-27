@@ -1535,11 +1535,16 @@ class: center, middle
 
 ---
 
-##### Limitation of `namespaceSelector`
+##### ~~Limitation of~~ More on `namespaceSelector`
 
 - allowing only `some` pods from other namespaces
 
-  - this isn't possible today
+  - ~~this isn't possible today~~
+
+---
+class: center, middle
+
+`namespaceSelector` and `podSelector`: A single to/from entry that specifies both namespaceSelector and podSelector selects particular Pods within particular namespaces.
 
 ---
 
